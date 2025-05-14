@@ -25,7 +25,7 @@ export default function App() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message: input })
+        body: JSON.stringify({ message: input }),
       });
       const data = await res.json();
       const response = data.response || "No response received.";
@@ -43,24 +43,27 @@ export default function App() {
         }
       }, 15);
     } catch (err) {
-      setMessages((prev) => [...prev, { role: "assistant", content: "Error fetching AI response." }]);
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: "Error fetching AI response." },
+      ]);
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-950 to-gray-900 text-white flex flex-col items-center justify-start p-6 font-sans">
-      <div className="w-full max-w-2xl flex flex-col gap-6">
-        <h1 className="text-5xl font-extrabold text-center text-blue-400 drop-shadow-sm">💼 AI Business Advisor</h1>
+    <div className="min-h-screen bg-gradient-to-b from-gray-950 to-gray-900 text-white flex flex-col items-center justify-center p-6 font-sans">
+      <div className="w-full max-w-2xl flex flex-col gap-6 text-center">
+        <h1 className="text-5xl font-extrabold text-blue-400 drop-shadow-sm">💼 AI Business Advisor</h1>
 
-        <div className="bg-gray-800 border border-gray-700 rounded-xl shadow-xl flex flex-col gap-4 p-6 max-h-[70vh] overflow-y-auto">
+        <div className="bg-gray-800 border border-gray-700 rounded-xl shadow-xl flex flex-col gap-4 p-6 max-h-[60vh] overflow-y-auto">
           {messages.map((msg, idx) => (
             <div
               key={idx}
-              className={`whitespace-pre-line px-5 py-3 rounded-3xl text-sm max-w-[80%] shadow-md transition-all duration-300 ${
+              className={`whitespace-pre-line px-5 py-3 rounded-3xl text-sm max-w-[80%] mx-auto shadow-md transition-all duration-300 ${
                 msg.role === "user"
-                  ? "bg-blue-600 text-white self-end rounded-br-none"
-                  : "bg-white text-gray-900 self-start rounded-bl-none"
+                  ? "bg-blue-600 text-white text-right"
+                  : "bg-white text-gray-900 text-left"
               }`}
             >
               {msg.content}
@@ -68,7 +71,7 @@ export default function App() {
           ))}
 
           {loading && (
-            <div className="bg-white text-gray-900 px-5 py-3 rounded-3xl text-sm self-start max-w-[80%] rounded-bl-none shadow-md">
+            <div className="bg-white text-gray-900 px-5 py-3 rounded-3xl text-sm max-w-[80%] mx-auto text-left shadow-md">
               {animatedText || <span className="text-gray-500">Thinking...</span>}
             </div>
           )}
@@ -76,9 +79,9 @@ export default function App() {
           <div ref={chatRef} />
         </div>
 
-        <div className="flex gap-3 mt-3">
+        <div className="flex gap-3 justify-center">
           <input
-            className="flex-1 bg-white text-gray-900 rounded-full px-4 py-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full max-w-md bg-white text-gray-900 rounded-full px-4 py-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
             placeholder="Ask a business question..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
