@@ -18,8 +18,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-HUGGINGFACE_API_KEY = os.getenv("HF_API_KEY")
-MODEL = "tiiuae/falcon-rw-1b"
+TOGETHER_API_KEY = os.getenv("TOGETHER_API_KEY")
+MODEL = "mistralai/Mixtral-8x7B-Instruct-v0.1"
 
 class ChatRequest(BaseModel):
     message: str
@@ -29,20 +29,25 @@ async def chat(data: ChatRequest):
     user_input = data.message
 
     headers = {
-        "Authorization": f"Bearer {HUGGINGFACE_API_KEY}",
+        "Authorization": f"Bearer {TOGETHER_API_KEY}",
         "Content-Type": "application/json"
     }
 
-    payload = {"inputs": user_input}
+    payload = {
+        "model": MODEL,
+        "prompt": user_input,
+        "max_tokens": 200,
+        "temperature": 0.7
+    }
+
     response = requests.post(
-        f"https://api-inference.huggingface.co/models/{MODEL}",
+        "https://api.together.xyz/v1/completions",
         headers=headers,
         json=payload
     )
 
     if response.status_code == 200:
         result = response.json()
-        generated = result[0].get("generated_text") if isinstance(result, list) else result
-        return {"response": generated}
+        return {"response": result['choices'][0]['text'].strip()}
     else:
-        return {"response": f"Error: {response.status_code}"}
+        return {"response": f"Error: {response.status_code} - {response.text}"}
