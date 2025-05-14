@@ -5,7 +5,6 @@ export default function App() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [animatedText, setAnimatedText] = useState("");
-  const [finalText, setFinalText] = useState("");
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -14,7 +13,6 @@ export default function App() {
     setInput("");
     setLoading(true);
     setAnimatedText("");
-    setFinalText("");
 
     try {
       const res = await fetch("https://business-backend-nsht.onrender.com/chat", {
@@ -27,19 +25,15 @@ export default function App() {
       const data = await res.json();
       const response = data.response || "No response received.";
 
-      setFinalText(response);
-      setAnimatedText(response[0]);
-
-      let i = 1;
+      let i = 0;
       const interval = setInterval(() => {
-        if (i < response.length) {
-          setAnimatedText((prev) => prev + response[i]);
+        if (i <= response.length) {
+          setAnimatedText(response.slice(0, i));
           i++;
         } else {
           clearInterval(interval);
           setMessages((prev) => [...prev, { role: "assistant", content: response }]);
           setAnimatedText("");
-          setFinalText("");
           setLoading(false);
         }
       }, 20);
