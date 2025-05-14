@@ -34,20 +34,29 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center p-4">
-      <div className="w-full max-w-xl bg-white rounded-2xl shadow p-4 flex-1 overflow-auto">
-        <h1 className="text-2xl font-bold mb-4">AI Business Advisor</h1>
-        <div className="space-y-2 mb-4">
+    <div className="min-h-screen bg-gray-950 text-white flex flex-col items-center p-6">
+      <div className="w-full max-w-2xl bg-gray-900 rounded-2xl shadow-lg p-6 flex flex-col gap-4">
+        <h1 className="text-3xl font-bold text-center text-blue-400">AI Business Advisor</h1>
+
+        <div className="flex-1 space-y-4 max-h-[60vh] overflow-y-auto pr-2">
           {messages.map((msg, idx) => (
-            <div key={idx} className={`p-2 rounded-lg ${msg.role === "user" ? "bg-blue-100 text-right" : "bg-green-100 text-left"}`}>
+            <div
+              key={idx}
+              className={`whitespace-pre-line p-4 rounded-xl text-sm leading-relaxed ${
+                msg.role === "user"
+                  ? "bg-blue-600 text-white text-right ml-auto max-w-[75%]"
+                  : "bg-gray-700 text-left mr-auto max-w-[75%]"
+              }`}
+            >
               {msg.content}
             </div>
           ))}
-          {loading && <div className="text-gray-500">Thinking...</div>}
+          {loading && <div className="text-sm text-gray-400">Thinking...</div>}
         </div>
-        <div className="flex gap-2">
+
+        <div className="flex gap-3 mt-4">
           <input
-            className="flex-1 border border-gray-300 rounded-xl px-4 py-2"
+            className="flex-1 rounded-xl px-4 py-2 text-black placeholder-gray-500 focus:outline-none"
             placeholder="Ask a business question..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -55,7 +64,7 @@ export default function App() {
           />
           <button
             onClick={handleSend}
-            className="bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600"
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl"
           >
             Send
           </button>
