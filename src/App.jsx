@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function App() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [animatedText, setAnimatedText] = useState("");
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -11,6 +12,7 @@ export default function App() {
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setLoading(true);
+    setAnimatedText("");
 
     try {
       const res = await fetch("https://business-backend-nsht.onrender.com/chat", {
@@ -21,14 +23,23 @@ export default function App() {
         body: JSON.stringify({ message: input })
       });
       const data = await res.json();
-      const aiResponse = {
-        role: "assistant",
-        content: data.response || "No response received."
-      };
-      setMessages((prev) => [...prev, aiResponse]);
+      const response = data.response || "No response received.";
+
+      let i = 0;
+      const interval = setInterval(() => {
+        if (i < response.length) {
+          setAnimatedText((prev) => prev + response[i]);
+          i++;
+        } else {
+          clearInterval(interval);
+          setMessages((prev) => [...prev, { role: "assistant", content: response }]);
+          setAnimatedText("");
+          setLoading(false);
+        }
+      }, 20);
+
     } catch (err) {
       setMessages((prev) => [...prev, { role: "assistant", content: "Error fetching AI response." }]);
-    } finally {
       setLoading(false);
     }
   };
@@ -51,7 +62,11 @@ export default function App() {
               {msg.content}
             </div>
           ))}
-          {loading && <div className="text-sm text-gray-400">Thinking...</div>}
+          {loading && (
+            <div className="bg-gray-700 text-left mr-auto max-w-[75%] p-4 rounded-xl text-sm leading-relaxed">
+              {animatedText || <span className="text-gray-400">Thinking...</span>}
+            </div>
+          )}
         </div>
 
         <div className="flex gap-3 mt-4">
