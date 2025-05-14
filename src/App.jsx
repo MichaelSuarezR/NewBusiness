@@ -12,15 +12,25 @@ export default function App() {
     setInput("");
     setLoading(true);
 
-    // Simulated API call
-    setTimeout(() => {
+    try {
+      const res = await fetch("https://business-backend-nsht.onrender.com/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message: input })
+      });
+      const data = await res.json();
       const aiResponse = {
         role: "assistant",
-        content: `AI says: Start by identifying a problem you can solve.`,
+        content: data.response || "No response received."
       };
       setMessages((prev) => [...prev, aiResponse]);
+    } catch (err) {
+      setMessages((prev) => [...prev, { role: "assistant", content: "Error fetching AI response." }]);
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -29,14 +39,7 @@ export default function App() {
         <h1 className="text-2xl font-bold mb-4">AI Business Advisor</h1>
         <div className="space-y-2 mb-4">
           {messages.map((msg, idx) => (
-            <div
-              key={idx}
-              className={`p-2 rounded-lg ${
-                msg.role === "user"
-                  ? "bg-blue-100 text-right"
-                  : "bg-green-100 text-left"
-              }`}
-            >
+            <div key={idx} className={`p-2 rounded-lg ${msg.role === "user" ? "bg-blue-100 text-right" : "bg-green-100 text-left"}`}>
               {msg.content}
             </div>
           ))}
