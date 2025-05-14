@@ -19,7 +19,7 @@ app.add_middleware(
 )
 
 HUGGINGFACE_API_KEY = os.getenv("HF_API_KEY")
-MODEL = "google/flan-t5-small"
+MODEL = "tiiuae/falcon-rw-1b"
 
 class ChatRequest(BaseModel):
     message: str
