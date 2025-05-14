@@ -25,7 +25,7 @@ export default function App() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message: input })
+        body: JSON.stringify({ message: input }),
       });
       const data = await res.json();
       const response = data.response || "No response received.";
@@ -43,7 +43,10 @@ export default function App() {
         }
       }, 15);
     } catch (err) {
-      setMessages((prev) => [...prev, { role: "assistant", content: "Error fetching AI response." }]);
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: "Error fetching AI response." },
+      ]);
       setLoading(false);
     }
   };
