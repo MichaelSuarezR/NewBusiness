@@ -20,8 +20,14 @@ app.add_middleware(
 HUGGINGFACE_API_KEY = os.getenv("HF_API_KEY")
 MODEL = "google/flan-t5-small"
 
+from pydantic import BaseModel
+
+class ChatRequest(BaseModel):
+    message: str
+
 @app.post("/chat")
 async def chat(request: Request):
+    user_input = data.message
     body = await request.json()
     user_input = body.get("message", "")
 
