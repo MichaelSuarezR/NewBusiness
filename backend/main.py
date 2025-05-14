@@ -1,6 +1,7 @@
 # backend/main.py
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 import requests
 import os
 from dotenv import load_dotenv
@@ -11,7 +12,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], 
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -20,16 +21,12 @@ app.add_middleware(
 HUGGINGFACE_API_KEY = os.getenv("HF_API_KEY")
 MODEL = "google/flan-t5-small"
 
-from pydantic import BaseModel
-
 class ChatRequest(BaseModel):
     message: str
 
 @app.post("/chat")
-async def chat(request: Request):
+async def chat(data: ChatRequest):
     user_input = data.message
-    body = await request.json()
-    user_input = body.get("message", "")
 
     headers = {
         "Authorization": f"Bearer {HUGGINGFACE_API_KEY}",
