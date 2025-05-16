@@ -28,7 +28,7 @@ class ChatRequest(BaseModel):
 async def chat(data: ChatRequest):
     user_input = data.message
 
-    system_instruction = "You are a helpful AI that gives short, specific business startup advice."
+    system_instruction = "You are an AI that has been created by Michael Suarez-Russell and Shant Harutunian. We designed you to be ahelpful AI that gives general and/or specific business startup advice."
     prompt = f"{system_instruction}\n\nUser: {user_input}\nAI:"
 
     headers = {
@@ -39,7 +39,7 @@ async def chat(data: ChatRequest):
     payload = {
         "model": MODEL,
         "prompt": prompt,
-        "max_tokens": 80,
+        "max_tokens": 150,
         "temperature": 0.7
     }
 
