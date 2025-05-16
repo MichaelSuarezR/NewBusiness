@@ -1,6 +1,6 @@
 // src/App.jsx
 import { useState, useEffect } from "react";
-import { marked } from 'marked';
+import { marked } from "marked";
 
 export default function App() {
   const [input, setInput] = useState("");
@@ -51,25 +51,30 @@ export default function App() {
             key={idx}
             className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
           >
-            {msg.role === "ai" ? (
+            <div
+              className={`px-4 py-3 rounded-lg max-w-xs ${
+                msg.role === "user"
+                  ? "bg-emerald-600 text-white"
+                  : "bg-neutral-800 text-gray-200"
+              }`}
+            >
               <div
-                className="bg-neutral-800 text-gray-200 p-4 rounded-lg max-w-lg self-start whitespace-pre-wrap prose prose-invert"
+                className="whitespace-pre-wrap"
                 dangerouslySetInnerHTML={{ __html: marked(msg.text) }}
               />
-            ) : (
-              <div className="bg-emerald-600 text-white p-2 px-4 rounded-full max-w-xs self-end text-right">
-                {msg.text}
-              </div>
-            )}
+            </div>
           </div>
         ))}
 
         {typing && (
           <div className="flex justify-start">
-            <div
-              className="px-4 py-3 rounded-lg bg-neutral-800 text-gray-300 max-w-xs whitespace-pre-wrap prose prose-invert"
-              dangerouslySetInnerHTML={{ __html: marked(typedText + '<span class="animate-pulse">|</span>') }}
-            />
+            <div className="px-4 py-3 rounded-lg bg-neutral-800 text-gray-300 max-w-xs">
+              <div
+                className="whitespace-pre-wrap"
+                dangerouslySetInnerHTML={{ __html: marked(typedText) }}
+              />
+              <span className="animate-pulse">|</span>
+            </div>
           </div>
         )}
       </div>
