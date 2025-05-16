@@ -28,7 +28,7 @@ export default function App() {
     const fullText = data.response;
     let i = 0;
     const interval = setInterval(() => {
-      setTypedText((prev) => prev + fullText[i]);
+      setTypedText(fullText.slice(0, i + 1));
       i++;
       if (i >= fullText.length) {
         clearInterval(interval);
