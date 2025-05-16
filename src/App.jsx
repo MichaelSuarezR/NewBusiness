@@ -1,60 +1,48 @@
-import { useState, useEffect } from "react";
+// src/App.jsx
+import { useState } from "react";
 
 export default function App() {
-  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [response, setResponse] = useState("");
 
-  const handleSend = async () => {
-    if (!input.trim()) return;
-    const userMessage = { role: "user", content: input };
-    setMessages((prev) => [...prev, userMessage]);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!input) return;
+    const res = await fetch("https://business-backend-nsht.onrender.com/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: input }),
+    });
+    const data = await res.json();
+    setResponse(data.response);
     setInput("");
-    setLoading(true);
-
-    try {
-      const res = await fetch("https://business-backend-nsht.onrender.com/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: input }),
-      });
-      const data = await res.json();
-      setMessages((prev) => [...prev, { role: "ai", content: data.response }]);
-    } catch (e) {
-      console.error("Error:", e);
-    }
-    setLoading(false);
   };
 
   return (
-    <div className="min-h-screen bg-red-800 text-white flex flex-col items-center justify-center p-6">
-      <h1 className="text-4xl font-bold mb-6">🧠 AI Business Advisor</h1>
-      <div className="w-full max-w-2xl bg-zinc-900 rounded-xl shadow-xl p-6 space-y-4">
-        {messages.map((msg, idx) => (
-          <div
-            key={idx}
-            className={`p-3 rounded-lg max-w-[80%] ${msg.role === "user" ? "bg-blue-600 ml-auto text-right" : "bg-gray-700 mr-auto text-left"}`}
-          >
-            {msg.content}
-          </div>
-        ))}
-        {loading && <div className="text-gray-400">Typing...</div>}
-        <div className="flex gap-2">
-          <input
-            className="flex-1 p-2 rounded border bg-zinc-800 border-zinc-600 text-white"
-            placeholder="Ask a business question..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSend()}
-          />
-          <button
-            className="bg-green-600 px-4 py-2 rounded text-white hover:bg-green-700"
-            onClick={handleSend}
-          >
-            Send
-          </button>
+    <div className="min-h-screen bg-neutral-950 text-white flex flex-col items-center justify-center px-4">
+      <h1 className="text-5xl sm:text-6xl font-extrabold mb-10 tracking-tight text-center">
+        <span role="img" aria-label="brain">🧠</span> AI Business Advisor
+      </h1>
+      <form
+        onSubmit={handleSubmit}
+        className="flex w-full max-w-2xl shadow-lg bg-neutral-900 rounded-full overflow-hidden"
+      >
+        <input
+          className="flex-grow px-6 py-4 bg-transparent text-white placeholder-gray-400 outline-none"
+          type="text"
+          placeholder="Ask a business question..."
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+        />
+        <button className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-6 transition-colors">
+          Send
+        </button>
+      </form>
+      {response && (
+        <div className="mt-10 max-w-2xl text-xl text-gray-300 leading-relaxed border-t border-neutral-800 pt-6">
+          {response}
         </div>
-      </div>
+      )}
     </div>
   );
 }
