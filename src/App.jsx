@@ -54,7 +54,7 @@ export default function App() {
   return (
   <div className="min-h-screen bg-gradient-to-b from-gray-950 to-gray-900 text-white flex flex-col items-center justify-between px-4 py-6 font-sans">
     <h1 className="text-4xl md:text-5xl font-extrabold text-blue-400 drop-shadow-sm mb-6">
-      💼 AI Business Advisor
+      💼 AI Business Advisorr
     </h1>
 
     <div className="flex flex-col w-full max-w-2xl flex-grow bg-gray-800 border border-gray-700 rounded-xl shadow-xl overflow-hidden">
