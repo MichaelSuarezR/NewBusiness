@@ -2,88 +2,79 @@ import { useState, useEffect } from 'react';
 
 export default function App() {
   const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [currentTyping, setCurrentTyping] = useState("");
+  const [typingMessage, setTypingMessage] = useState('');
 
   const handleSend = async () => {
     if (!input.trim()) return;
-    const userMessage = { role: "user", content: input };
+
+    const userMessage = { role: 'user', content: input };
     setMessages((prev) => [...prev, userMessage]);
-    setInput("");
+    setInput('');
     setLoading(true);
 
-    try {
-      const res = await fetch("https://business-backend-nsht.onrender.com/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ message: input }),
-      });
+    const res = await fetch('https://business-backend-nsht.onrender.com/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: input })
+    });
 
-      const data = await res.json();
-      typeResponse(data.response);
-    } catch (err) {
-      typeResponse("Sorry, something went wrong.");
-    }
-  };
+    const data = await res.json();
+    const fullReply = data.response;
 
-  const typeResponse = (text) => {
-    let index = 0;
-    setCurrentTyping("");
-
+    let i = 0;
+    setTypingMessage('');
     const interval = setInterval(() => {
-      if (index < text.length) {
-        setCurrentTyping((prev) => prev + text.charAt(index));
-        index++;
-      } else {
+      setTypingMessage((prev) => prev + fullReply[i]);
+      i++;
+      if (i >= fullReply.length) {
         clearInterval(interval);
-        setMessages((prev) => [...prev, { role: "assistant", content: text }]);
-        setCurrentTyping("");
+        setMessages((prev) => [...prev, { role: 'assistant', content: fullReply }]);
+        setTypingMessage('');
         setLoading(false);
       }
     }, 20);
   };
 
   return (
-    <div className="min-h-screen bg-neutral-900 text-white flex flex-col items-center px-4 py-12">
-      <h1 className="text-4xl md:text-6xl font-bold mb-8 flex items-center">
-        <span className="text-5xl mr-3">💼</span> AI Business Advisor
-      </h1>
+    <div className="min-h-screen bg-zinc-900 text-white flex items-center justify-center px-4">
+      <div className="w-full max-w-2xl space-y-6 py-10">
+        <h1 className="text-4xl font-bold text-center flex items-center justify-center gap-2">
+          <span>💼</span> AI Business Advisor
+        </h1>
 
-      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-lg p-6 text-black flex flex-col space-y-4">
-        {messages.map((msg, idx) => (
-          <div
-            key={idx}
-            className={`max-w-[80%] px-4 py-2 rounded-xl whitespace-pre-wrap text-sm ${
-              msg.role === "user"
-                ? "ml-auto bg-blue-500 text-white"
-                : "mr-auto bg-gray-100 text-black"
-            }`}
-          >
-            {msg.content}
-          </div>
-        ))}
+        <div className="space-y-4">
+          {messages.map((msg, idx) => (
+            <div
+              key={idx}
+              className={`max-w-[75%] px-4 py-2 rounded-xl whitespace-pre-wrap ${
+                msg.role === 'user' ? 'bg-blue-600 self-end ml-auto text-right' : 'bg-zinc-700 text-left'
+              }`}
+            >
+              {msg.content}
+            </div>
+          ))}
 
-        {loading && (
-          <div className="mr-auto bg-gray-100 px-4 py-2 rounded-xl text-sm text-black">
-            {currentTyping}
-            <span className="animate-pulse">█</span>
-          </div>
-        )}
+          {typingMessage && (
+            <div className="max-w-[75%] px-4 py-2 rounded-xl bg-zinc-700 text-left animate-pulse">
+              {typingMessage}
+            </div>
+          )}
+        </div>
 
-        <div className="flex mt-4">
+        <div className="flex gap-2 pt-4">
           <input
-            className="flex-1 border border-gray-300 rounded-l-xl p-3 text-sm outline-none"
+            className="flex-1 px-4 py-2 rounded-xl text-black"
             placeholder="Ask a business question..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSend()}
+            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
           />
           <button
-            className="bg-black text-white px-4 rounded-r-xl hover:bg-gray-800"
             onClick={handleSend}
+            disabled={loading}
+            className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500"
           >
             Send
           </button>
